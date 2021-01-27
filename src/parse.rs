@@ -39,18 +39,19 @@ impl Parsable for Expr {
             return Err("expected a non-empty input".to_string())
         }
         let first_char: char;
-        match rep.trim().chars().next() {
+        let parse_str: String = rep.trim().to_string();
+        match parse_str.chars().next() {
             Some(c) => first_char = c,
             None => return Err(format!("unable to parse expression: {}", rep)),
         }
         if first_char.is_ascii_digit() {
-            return Number::parse(rep);
+            return Number::parse(parse_str);
         }
         if first_char == OPEN_PAREN {
-            return parse_paren_expr(rep);
+            return parse_paren_expr(parse_str);
         }
         if first_char.is_alphabetic() {
-            return Ok(Id::parse(rep)?.into());
+            return Ok(Id::parse(parse_str)?.into());
         }
         Err(format!("unexpected symbol: {}", first_char))
     }
@@ -128,11 +129,11 @@ impl Parsable for Binding {
     
     fn parse(input: String) -> Result<Binding, String> {
         let mut stripped: String;
-        match strip_ends(input, OPEN_PAREN, CLOSE_PAREN) {
+        match strip_ends(input.trim().to_string(), OPEN_PAREN, CLOSE_PAREN) {
             Some(s) => stripped = s,
             None => return Err("expected With binding to be wrapped in parentheses".to_string())
         }
-        match strip_ends(stripped, OPEN_BRACE, CLOSE_BRACE) {
+        match strip_ends(stripped.trim().to_string(), OPEN_BRACE, CLOSE_BRACE) {
             Some(s) => stripped = s,
             None => return Err("expected With binding to be wrapped in brackets".to_string())
         }
@@ -154,15 +155,16 @@ impl Parsable for Id {
     type Parsed = Id;
     
     fn parse(input: String) -> Result<Id, String> {
-        if input.eq(WITH_OP) {
+        let parse_str: &str = input.trim();
+        if parse_str.eq(WITH_OP) {
             return Err("identifier cannot be 'with'".to_string())
         }
-        for ch in input.chars() {
+        for ch in parse_str.chars() {
             if !ch.is_alphabetic() {
                 return Err("expected an alphabetic identifier".to_string())
             }
         }
-        Ok(Id { val: input })
+        Ok(Id { val: parse_str.to_string() })
     }
 }
 
@@ -226,7 +228,7 @@ fn split_tokens(input: String) -> Vec<String> {
     tokens
 }
 
-// strip_ends returns the string wrapped within the given prefix and suffix.
+// strip_ends strips the given prefix and suffix from the given string.
 // Returns None if the prefix or suffix do not exist.
 fn strip_ends(input: String, prefix: char, suffix: char) -> Option<String> {
     let stripped: String;

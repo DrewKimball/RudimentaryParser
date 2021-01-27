@@ -16,6 +16,11 @@ fn main() {
     test_expr("(with ([x 1]) (with ([y (* x 2)]) (+ x y)))".to_string());
     test_expr("(with ([x 1]) (+ (with ([x (* x 2)]) x) x))".to_string());
     test_expr("gvtct".to_string());
+    test_expr("  342             ".to_string());
+    test_expr("  (+ 1 2)             ".to_string());
+    test_expr("    (   +  1     2    ) ".to_string());
+    test_expr(" (     with    (  [  x    (       -     23   7  ) ])    \
+    ( +   (  /    x 2)    ( * 3     4) ))".to_string());
     test_expr("(* 1 jksef)".to_string());
     test_expr("1vtct".to_string());
     test_expr("(+ 1 2 3)".to_string());
