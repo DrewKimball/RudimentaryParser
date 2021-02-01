@@ -11,43 +11,49 @@ use crate::subst::Substitutable;
 use crate::pretty_print::pretty_print;
 
 fn main() {
-    test_expr("253354".to_string());
-    test_expr("(with ([x (- 23 7)]) (+ (/ x 2) (* 3 4)))".to_string());
-    test_expr("(with ([x 1]) (with ([y (* x 2)]) (+ x y)))".to_string());
-    test_expr("(with ([x 1]) (+ (with ([x (* x 2)]) x) x))".to_string());
-    test_expr("gvtct".to_string());
-    test_expr("  342             ".to_string());
-    test_expr("  (+ 1 2)             ".to_string());
-    test_expr("    (   +  1     2    ) ".to_string());
+    println!("RUNNING RUDIMENTARY INTERPRETER TESTS");
+
+    test_expr("253354", "253354");
+    test_expr("(+ 1 2)", "3");
+    test_expr("(with ([x (- 23 7)]) (+ (/ x 2) (* 3 4)))", "20");
+    test_expr("(with ([x 1]) (with ([y (* x 2)]) (+ x y)))", "3");
+    test_expr("(with ([x 1]) (+ (with ([x (* x 2)]) x) x))", "3");
+    test_expr("  (+ 1 2)             ", "3");
+    test_expr("    (   +  1     2    ) ", "3");
     test_expr(" (     with    (  [  x    (       -     23   7  ) ])    \
-    ( +   (  /    x 2)    ( * 3     4) ))".to_string());
-    test_expr("(* 1 jksef)".to_string());
-    test_expr("1vtct".to_string());
-    test_expr("(+ 1 2 3)".to_string());
-    test_expr("()".to_string());
-    test_expr("(+ 1 2".to_string());
-    println!("{}\n", "=".repeat(80));
+    ( +   (  /    x 2)    ( * 3     4) ))", "20");
+    test_expr("gvtct", "error");
+    test_expr("(* 1 jksef)", "error");
+    test_expr("1vtct", "error");
+    test_expr("(+ 1 2 3)", "error");
+    test_expr("()", "error");
+    test_expr("(+ 1 2", "error");
+    println!("{}", "=".repeat(80));
 }
 
-fn test_expr(string_rep: String) {
-    println!("{}\n", "=".repeat(80));
-    println!("Original AST:");
+fn test_expr(string_rep: &str, expected: &str) {
+    println!("{}", "=".repeat(80));
+    println!("Expression: {}\n", string_rep);
+    println!("Test Parse:");
     let mut ast: Expr;
-    match parse(string_rep) {
+    match parse(string_rep.to_string()) {
         Ok(expr) => {
             ast = expr;
             pretty_print(&ast)
         },
         Err(msg) => {
-            println!("Error: {}\n", msg);
+            println!("Error: {}", msg);
+            println!("Expected: {}", expected);
             return
         }
     }
-    println!("After With Replacement:");
+    println!("Test Subst:");
     ast = ast.replace();
     pretty_print(&ast);
+    print!("Test Calc: ");
     match calc(&ast) {
-        Ok(val) => println!("Result Of Evaluation: {}\n", val),
-        Err(msg) => println!("Error: {}\n", msg)
+        Ok(val) => println!("{}", val),
+        Err(msg) => println!("Error: {}", msg)
     }
+    println!("Expected: {}", expected)
 }
