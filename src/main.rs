@@ -15,6 +15,9 @@ fn main() {
 
     test_expr("253354", "253354");
     test_expr("(+ 1 2)", "3");
+    test_expr("(- 3 7)", "-4");
+    test_expr("(* 7 3)", "21");
+    test_expr("(/ 7 3)", "2");
     test_expr("(with ([x (- 23 7)]) (+ (/ x 2) (* 3 4)))", "20");
     test_expr("(with ([x 1]) (with ([y (* x 2)]) (+ x y)))", "3");
     test_expr("(with ([x 1]) (+ (with ([x (* x 2)]) x) x))", "3");

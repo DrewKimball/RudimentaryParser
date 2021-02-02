@@ -31,7 +31,7 @@ macro_rules! into_expr {
 
 #[derive(Copy, Clone)]
 pub struct Number {
-    pub(crate) val: f32,
+    pub(crate) val: i32,
 }
 
 into_expr!(Number);

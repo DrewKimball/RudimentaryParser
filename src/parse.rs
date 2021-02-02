@@ -10,7 +10,7 @@
 // ============================================================================
 
 use crate::{Expr, Number, Binary, Operator, With, Binding, Id};
-use std::num::ParseFloatError;
+use std::num::ParseIntError;
 use std::str::Chars;
 
 // parse returns an abstract syntax tree that represents the expression provided
@@ -62,10 +62,11 @@ impl Parsable for Number {
     type Parsed = Expr;
     
     fn parse(input: String) -> Result<Expr, String> {
-        let result_val: Result<f32, ParseFloatError> = input.parse::<f32>();
+        let result_val: Result<i32, ParseIntError> = input.parse::<i32>();
         return match result_val {
+            Ok(val) if val <= 0 => Err("expected a natural number".to_string()),
             Ok(val) => Ok(Number{ val }.into()),
-            Err(_) => Err("expected a Number".to_string())
+            Err(_) => Err("expected a natural number".to_string())
         }
     }
 }
